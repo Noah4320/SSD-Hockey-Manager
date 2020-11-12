@@ -1,0 +1,240 @@
+﻿@model HockeyManager.ViewModel.SearchPlayer
+@using Microsoft.AspNetCore.Identity
+@using HockeyManager.Areas.Identity.Data
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $.ajax(
+            {
+                url: "https://hockeymanager.azurewebsites.net/Search/getFavourites",
+                success: function (result) {
+                    $('input[id="player"]').each(function () {
+                        if (result.includes($(this).val())) {
+                            this.checked = true;
+                        }
+
+                    })
+                }
+            });
+
+        $(".myChk").click(function () {
+            var favorite = [];
+            var nonFavourite = [];
+            $.each($("input[id='player']:checked"), function () {
+                favorite.push($(this).val());
+            });
+            $.each($("input[id='player']:not(:checked)"), function () {
+                nonFavourite.push($(this).val());
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "https://hockeymanager.azurewebsites.net/Search/Post",
+                traditional: true,
+                dataType: 'application/json',
+                data: {
+                    fav: favorite,
+                    nonFav: nonFavourite
+                },
+                success: function (data, textStatus, jqXHR) {
+                    //data - response from server
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                }
+            });
+         });
+    });
+</script>
+
+<div class="container">
+    <form method="post" action="SearchPlayers">
+
+        Name
+        <input type="text" id="Name" name="Name" />
+        <div class="row">
+            <div class="col-12">
+                <input type="checkbox" onclick="checkAll(this.checked)" checked /> Select all
+                @foreach (var item in Model.Teams)
+                {
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name=@item.TeamInfo.Abbreviation id="team" checked> @item.TeamInfo.Name
+                    </label>
+
+                }
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="Position">Position</label>
+            <select class="form-control" name="Position" id="Position">
+                <option value=""></option>
+                <option value="C">Center</option>
+                <option value="LW">Left Wing</option>
+                <option value="RW">Right Wing</option>
+                <option value="D">Defenceman</option>
+                <option value="G">Goalie</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Favourite">Favourite</label>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <select class="form-control" name="Favourite" id="Favourite">
+                    <option value=""></option>
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                </select>
+            }
+            else
+            {
+                <select class="form-control" name="Favourite" id="Favourite" disabled>
+                    <option value=""></option>
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                </select>
+            }
+
+        </div>
+
+        <input type="submit" />
+    </form>
+</div>
+<div class="tableFixHead">
+    <div class="pre-scrollable">
+        <table class="table">
+            <thead>
+                <tr id="fixedTableColour">
+                    <th id="fixedTableColour">
+                        Favourite
+                    </th>
+                    <th id="fixedTableColour">
+                        Picture
+                    </th>
+                    <th id="fixedTableColour">
+                        Name
+                    </th>
+                    <th id="fixedTableColour">
+                        Team
+                    </th>
+                    <th id="fixedTableColour">
+                        POS
+                    </th>
+                    <th id="fixedTableColour">
+                        Country
+                    </th>
+                    <th id="fixedTableColour">
+                        GP
+                    </th>
+                    <th id="fixedTableColour">
+                        G
+                    </th>
+                    <th id="fixedTableColour">
+                        A
+                    </th>
+                    <th id="fixedTableColour">
+                        PTS
+                    </th>
+                    <th id="fixedTableColour">
+                        Rank
+                    </th>
+                    <th id="fixedTableColour">
+                        DOB
+                    </th>
+                    <th id="fixedTableColour">
+                        +/-
+                    </th>
+                    <th id="fixedTableColour">
+                        Height
+                    </th>
+                    <th id="fixedTableColour">
+                        Weight
+                    </th>
+                    <th id="fixedTableColour">
+                        PM
+                    </th>
+                    <th id="fixedTableColour">
+                        S
+                    </th>
+                    <th id="fixedTableColour">
+                        SO
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Players)
+                {
+                <tr>
+                    <td>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <input type="checkbox" class="myChk" name="isChecked" id="player" value=@item.Id />
+                        }
+                        else
+                        {
+                            <input type="checkbox" class="myChk" name="isChecked" id="player" value=@item.Id  disabled/>
+                        }
+
+                    </td>
+                    <td>
+                        <img src=@Html.DisplayFor(modelItem => item.PlayerInfo.HeadShotUrl) alt="Headshot" width="100" height="100">
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlayerInfo.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Team.TeamInfo.Abbreviation)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlayerInfo.Position)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlayerInfo.Country)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GamesPlayed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Goals)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Assists)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Points)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rank)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlayerInfo.DateOfBirth.Year)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlusMinus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlayerInfo.Height)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlayerInfo.Weight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PenalityMinutes)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Saves)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Shutouts)
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

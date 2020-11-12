@@ -1,0 +1,178 @@
+﻿@model HockeyManager.ViewModel.PoolsViewModel
+@inject HockeyManager.Data.HockeyContext _context
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="~/css/site.css" rel="stylesheet" />
+
+<script>
+    $(document).ready(function () {
+        $(".my-tooltip").tooltip();
+        var poolName = "";
+        $(document).on('click', '.playerData', function () {
+            var poolId = this.id;
+            poolName = $(this).closest('tr').find('td:eq(0)')[0].innerText;
+            var poolRule = $(this).closest('tr').find('td:eq(1)')[0].innerText;
+            var isPrivate = $(this).closest('tr').find('td:eq(2)')[0].innerText;
+            isPrivate = (isPrivate == "True");
+            var poolSize = $(this).closest('tr').find('td:eq(3)')[0].innerText;
+            poolSize = poolSize.split("/")[1];
+            var poolStatus = $(this).closest('tr').find('td:eq(4)')[0].innerText;
+
+            $('#poolId').val(poolId);
+            if (poolStatus == "Active") {
+
+                $('#poolId').prop("disabled", false);
+                $('#private')[0].checked = isPrivate;
+                $('#private').prop("disabled", false);
+                $('#private').val("true");
+                $('#size').val(poolSize);
+                $('#size').prop("disabled", false);
+
+                $("input:radio").each(function () {
+                    $(this).prop("disabled", false);
+                    if (this.id == poolRule) {
+                        this.checked = true
+                    }
+
+                })
+
+                $('#update').prop("disabled", false);
+                $('#archive').prop("disabled", false);
+                $('#delete').prop("disabled", false);
+
+            } else {
+
+                $('#poolId').prop("disabled", true);
+                $('#private')[0].checked = isPrivate;
+                $('#private').prop("disabled", true);
+                $('#private').val("true");
+                $('#size').val(poolSize);
+                $('#size').prop("disabled", true);
+
+                $("input:radio").each(function () {
+                    $(this).prop("disabled", true);
+                    if (this.id == poolRule) {
+                        this.checked = true
+                    }
+
+                })
+
+                $('#update').prop("disabled", true);
+                $('#archive').prop("disabled", true);
+                $('#delete').prop("disabled", false);
+            }
+           
+
+        }); 
+        $(document).on('click', '#archive', function () {
+            var id = $('#poolId').val();
+            $.ajax({
+                type: "POST",
+                url: "https://hockeymanager.azurewebsites.net/Pool/Archive",
+                data: {
+                    poolId: id
+                }
+            }).done(function (x) {
+                location.reload();
+            }).fail(function (x) {
+                alert(x.responseText);
+
+            });
+        }); 
+
+        $(document).on('click', '#delete', function () {
+            var confirmDelete = confirm("Are you sure you want to delete " + poolName + "?");
+
+            if (confirmDelete) {
+                var id = $('#poolId').val();
+                $.ajax({
+                    type: "DELETE",
+                    url: "https://hockeymanager.azurewebsites.net/Pool/Delete",
+                    data: {
+                        poolId: id
+                    }
+                }).done(function (x) {
+                    location.reload();
+                }).fail(function (x) {
+                    alert(x.responseText);
+
+                });
+            }
+
+        }); 
+    });
+</script>
+
+<h4>Pool</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+                <table class="table table-striped" id="InteractiveTable">
+                    <thead>
+                        <tr>
+                            <th>Pool Name</th>
+                            <th>Rule</th>
+                            <th>Private</th>
+                            <th>Party</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pool in Model.Pools)
+                        {
+                        <tr class="playerData" id=@pool.Id>
+                            <td>@pool.Name</td>
+                            <td>@pool.RuleSet.Name</td>
+                            <td>@pool.Private</td>
+                            <td>@_context.Teams.Where(x => x.PoolId == pool.Id).Count()/@pool.Size</td>
+                            <td>@pool.Status</td>
+                        </tr>
+                        }
+                    </tbody>
+               </table>
+    </div>
+    <div class="col-md-6">
+        <div class="text-center">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group" hidden>
+                    <label asp-for="Pool.Id" class="control-label"></label>
+                    <input asp-for="Pool.Id" id="poolId" class="form-control" disabled />
+                    <span asp-validation-for="Pool.Id" class="text-danger"></span>
+                </div>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input id="private" name="Pool.Private" type="checkbox" disabled/> Private
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Pool.Size" class="control-label"></label>
+                    <input asp-for="Pool.Size" id="size" class="form-control" disabled />
+                    <span asp-validation-for="Pool.Size" class="text-danger">@ViewBag.SizeError</span>
+                </div>
+
+                <div class="form-group">
+                    @foreach (var rule in Model.RuleSet)
+                    {
+                        <input type="radio" asp-for="Pool.RuleSetId" class="ruleset" id=@rule.Name value=@rule.Id disabled>
+                        <label for="rule">@rule.Name</label>
+                        <i class="fas fa-question-circle" title="@rule.Description"></i><br>
+                    }
+                    <span asp-validation-for="Pool.RuleSetId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input id="update" type="submit" value="Update" class="btn btn-success" disabled />
+                    <button id="archive" type="button" class="btn btn-warning" disabled>Archive</button>
+                    <button id="delete" type="button" class="btn btn-danger" disabled>Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

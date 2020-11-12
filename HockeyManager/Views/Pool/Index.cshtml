@@ -1,0 +1,100 @@
+﻿@model HockeyManager.ViewModel.PoolsViewModel
+@using Microsoft.AspNetCore.Identity
+@using HockeyManager.Areas.Identity.Data
+@inject UserManager<User> UserManager
+
+@section scripts{
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $.ajax(
+                    {
+                        url: "https://hockeymanager.azurewebsites.net/Pool/GetPools",
+                        success: function (result) {
+                            $("#pools").autocomplete({
+                                source: result
+                            });
+                        }
+                    });
+                $(document).on('click', '#joinPool', function () {
+                    var name = $("#pools").val();
+                    $.ajax({
+                        type: "POST",
+                        url: "https://hockeymanager.azurewebsites.net/Pool/JoinPool",
+                        data: {
+                            poolName: name
+                        }
+                 }).done(function (x) {
+
+                     if (x == "Pool joined successfully!") {
+                         location.reload();
+
+                     } else {
+                        alert(x);
+                     }
+
+                 })
+                   .fail(function (x) {
+                        alert(x.responseText);
+
+                        });
+                    });
+                });
+             });
+    </script>
+}
+<div class="container">
+    <div class="text-center">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <input type="button" class="btn btn-success" value="Create" onclick="location.href='@Url.Action("CreatePool", "Pool")'" />
+                </div>
+                <div class="text-center">
+                    <input type="button" class="btn btn-warning" value="Edit" onclick="location.href='@Url.Action("Edit", "Pool")'" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h1>Pools</h1>
+
+
+                @foreach (var pool in Model.poolList)
+                {
+                <h2>@Html.ActionLink(pool.Pool.Name, "Details", new { id = pool.Pool.Id })</h2>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Position</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @{ int counter = 1;}
+
+                            @foreach (var team in pool.Pool.Teams)
+                            {
+                                <tr>
+                                    <td>@counter</td>
+                                    <td>@team.User.UserName</td>
+                                    <td>@team.Points</td>
+                                </tr>
+                                counter++;
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="col-md-4">
+                <label class="control-label" for="pools">Search Pool or enter code: </label>
+                <input class="form-control" id="pools">
+                <span class="text-danger"></span>
+                <input type="submit" value="Join Pool" id="joinPool" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</div>

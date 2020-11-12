@@ -1,0 +1,132 @@
+﻿@model HockeyManager.Models.Pool
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<link href="~/css/site.css" rel="stylesheet" />
+
+<script>
+    $(document).ready(function () {
+
+        @if (Model.Status == "Archived")
+        {
+            <Text>
+        $("#manageTeam").prop("disabled", true);
+            </Text>
+        }
+
+        @if (ViewBag.hasTeam != null) {
+
+            @if (ViewBag.hasTeam && Model.Status == "Active")
+            {
+                <Text>
+                $("#leavePool").prop("disabled", false);
+                </Text>
+            }
+         }
+
+        $(document).on('click', '.playerData', function () {
+                var teamId = (this.id);
+            $.ajax({
+                type: "GET",
+                url: "https://hockeymanager.azurewebsites.net/Pool/GetTeamRoster",
+                data: {
+                    id: teamId
+                }
+                }).done(function (roster) {
+                    var result = "";
+                    var players = JSON.parse(roster);
+                    var teamName = players[0].Team.TeamInfo.Name;
+                $.each(players, function (id, player) {
+
+                        result += '<tr> <td>' + player.PlayerInfo.Position + '</td>' +
+
+                            '<td>' + player.PlayerInfo.Name + '</td>' +
+
+                            '<td>' + player.Goals + '</td>' +
+
+                            '<td>' + player.Assists + '</td>' +
+
+                            '<td>' + player.Points + '</td> </tr>';
+                    });
+                $("#refTable").html(result);
+                $("#teamName").html(teamName);
+                })
+
+            .fail(function (x) {
+                    alert(x.responseText);
+
+                });
+            });
+        });
+    $(document).on('click', '#leavePool', function () {
+        var confirmDropout = confirm("Are you sure you want to leave @Model.Name? (your team will be removed)");
+
+        if (confirmDropout) {
+            var poolId = @Model.Id;
+            $.ajax({
+                type: "DELETE",
+                url: "https://hockeymanager.azurewebsites.net/Pool/LeavePool",
+                data: {
+                    id: poolId
+                }
+            }).done(function (x) {
+                location.reload();
+            }).fail(function (x) {
+                alert(x.responseText);
+
+            });
+        }
+
+    }); 
+</script>
+
+
+<div class="container">
+    <div class="text-center">
+        <h2>@Model.Name</h2>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Pool Teams</h3>
+            <table class="table table-striped" id="InteractiveTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int counter = 1;}
+                    @foreach (var team in Model.Teams)
+                    {
+                        <tr class="playerData" id=@team.Id>
+                            <td>@counter</td>
+                            <td>@team.User.UserName</td>
+                            <td>@team.Points</td>
+                            <td>@team.TeamInfo.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h3 id="teamName"></h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Position</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Goals</th>
+                        <th scope="col">Assists</th>
+                        <th scope="col">Points</th>
+                    </tr>
+                </thead>
+                <tbody id="refTable"></tbody>
+            </table>
+        </div>
+    </div>
+    <input type="button" class="btn btn-success" id="manageTeam" value="Add or Update Team" onclick="location.href='@Url.Action("ManagePoolTeam", "Pool", new { id = Model.Id})?id=' + @Model.Id" />
+    <button id="leavePool" type="button" class="btn btn-danger" disabled>Leave Pool</button>
+</div>

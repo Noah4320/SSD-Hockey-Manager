@@ -1,0 +1,75 @@
+﻿@model HockeyManager.ViewModel.PoolsViewModel
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/additional-methods.js"></script>
+<script src="~/lib/jquery-validation/dist/additional-methods.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(".ruleset").click(function () {
+            var radioValue = $("input[id='rules']:checked").val();
+            $.ajax({
+                type: "POST",
+                url: "https://hockeymanager.azurewebsites.net/Pool/GetRule",
+                traditional: true,
+                data: {
+                    id: radioValue
+                },
+                success: function (data, textStatus, jqXHR) {
+                    document.getElementById('rule').innerHTML = data;
+                    //data - response from server
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                }
+            });
+        });
+    });
+</script>
+
+<div class="container">
+    <h4>Pool</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="CreatePool">
+                <div class="form-group">
+                    <label asp-for="Pool.Name" class="control-label"></label>
+                    <input asp-for="Pool.Name" class="form-control" />
+                    <span asp-validation-for="Pool.Name" class="text-danger">@ViewBag.ErrorMessage</span>
+                </div>
+                <div class="form-group">
+                    @foreach (var rule in Model.RuleSet)
+                    {
+                        <input type="radio" asp-for="Pool.RuleSetId" class="ruleset" id="rules" value=@rule.Id>
+                        <label for="rule">@rule.Name</label><br>
+                    }
+                    <span asp-validation-for="Pool.RuleSetId" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="Pool.Private" /> @Html.DisplayNameFor(model => model.Pool.Private)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Pool.Size" class="control-label"></label>
+                    <input asp-for="Pool.Size" class="form-control" />
+                    <span asp-validation-for="Pool.Size" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="text-center">
+                <p id="rule"></p>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>

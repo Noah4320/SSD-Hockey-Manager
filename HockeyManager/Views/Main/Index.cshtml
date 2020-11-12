@@ -1,0 +1,290 @@
+﻿@model HockeyManager.ViewModel.SearchPlayer
+
+@{
+    ViewData["Title"] = "Main Page";
+}
+<div class="container">
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <div class="row">
+            <div class="col-md-6">
+
+                <div id="carouselTeamStandings" class="carousel slide" data-ride="carousel">
+
+                    <ol class="carousel-indicators">
+                        <li data-target="#carouselTeamStandings" data-slide-to="0" class="active"></li>
+                        <li data-target="#carouselTeamStandings" data-slide-to="1"></li>
+                        <li data-target="#carouselTeamStandings" data-slide-to="2"></li>
+                    </ol>
+
+                    <div class="carousel-inner">
+
+                        <div class="carousel-item active">
+
+                            <h2>Overall Standings</h2>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Division</th>
+                                        <th scope="col">Games Played</th>
+                                        <th scope="col">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{ int counter = 1;}
+                                    @foreach (var team in Model.Teams)
+                                    {
+
+                                        if (counter >= 6)
+                                        {
+                                            break;
+                                        }
+
+                                        <tr>
+                                            <th scope="row">@counter: <img src=@team.TeamInfo.logoUrl alt="Logo" width="50" height="50"></th>
+                                            <td>@team.TeamInfo.Name</td>
+                                            <td>@team.TeamInfo.Division</td>
+                                            <td>@team.GamesPlayed</td>
+                                            <td>@team.Points</td>
+                                        </tr>
+                                        counter++;
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="carousel-item">
+                            <h2>Eastern Conference Standings</h2>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Division</th>
+                                        <th scope="col">Games Played</th>
+                                        <th scope="col">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{ counter = 1;}
+                                    @foreach (var team in Model.Teams)
+                                    {
+                                        if (counter >= 6)
+                                        {
+                                            break;
+                                        }
+
+                                        @if (team.TeamInfo.Conference == "Eastern")
+                                        {
+                                            <tr>
+                                                <th scope="row">@counter: <img src=@team.TeamInfo.logoUrl alt="Logo" width="50" height="50"></th>
+                                                <td>@team.TeamInfo.Name</td>
+                                                <td>@team.TeamInfo.Division</td>
+                                                <td>@team.GamesPlayed</td>
+                                                <td>@team.Points</td>
+                                            </tr>
+                                            counter++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="carousel-item">
+                            <h2>Western Conference Standings</h2>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Division</th>
+                                        <th scope="col">Games Played</th>
+                                        <th scope="col">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{ counter = 1;}
+                                    @foreach (var team in Model.Teams)
+                                    {
+                                        if (counter >= 6)
+                                        {
+                                            break;
+                                        }
+
+                                        @if (team.TeamInfo.Conference == "Western")
+                                        {
+                                            <tr>
+                                                <th scope="row">@counter: <img src=@team.TeamInfo.logoUrl alt="Logo" width="50" height="50"></th>
+                                                <td>@team.TeamInfo.Name</td>
+                                                <td>@team.TeamInfo.Division</td>
+                                                <td>@team.GamesPlayed</td>
+                                                <td>@team.Points</td>
+                                            </tr>
+                                            counter++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselTeamStandings" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselTeamStandings" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+                <input type="button" value="My Hockey Pools" onclick="location.href='@Url.Action("Index", "Pool")'" />
+            </div>
+            <div class="col-md-6">
+                <div id="carouselPlayerStandings" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#carouselPlayerStandings" data-slide-to="0" class="active"></li>
+                        <li data-target="#carouselPlayerStandings" data-slide-to="1"></li>
+                        <li data-target="#carouselPlayerStandings" data-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <h2>Point Leaders</h2>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Team</th>
+                                        <th scope="col">Games Played</th>
+                                        <th scope="col">Goals</th>
+                                        <th scope="col">Assists</th>
+                                        <th scope="col">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{ Model.Players = Model.Players.OrderByDescending(x => x.Points);}
+
+                                    @{ counter = 1;}
+                                    @foreach (var player in Model.Players)
+                                    {
+                                        if (counter >= 6)
+                                        {
+                                            break;
+                                        }
+                                        <tr>
+                                            <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" alt="Logo" width="50" height="50"></th>
+                                            <td>@player.PlayerInfo.Name</td>
+                                            <td>@player.Team.TeamInfo.Abbreviation</td>
+                                            <td>@player.GamesPlayed</td>
+                                            <td>@player.Goals</td>
+                                            <td>@player.Assists</td>
+                                            <td>@player.Points</td>
+                                        </tr>
+                                        counter++;
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="carousel-item">
+                            <h2>Goal Leaders</h2>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Team</th>
+                                        <th scope="col">Games Played</th>
+                                        <th scope="col">Goals</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{ Model.Players = Model.Players.OrderByDescending(x => x.Goals);}
+
+                                    @{ counter = 1;}
+                                    @foreach (var player in Model.Players)
+                                    {
+                                        if (counter >= 6)
+                                        {
+                                            break;
+                                        }
+                                    <tr>
+                                        <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" alt="Logo" width="50" height="50"></th>
+                                        <td>@player.PlayerInfo.Name</td>
+                                        <td>@player.Team.TeamInfo.Abbreviation</td>
+                                        <td>@player.GamesPlayed</td>
+                                        <td>@player.Goals</td>
+                                    </tr>
+                                        counter++;
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="carousel-item">
+                            <h2>Assist Leaders</h2>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Team</th>
+                                        <th scope="col">Games Played</th>
+                                        <th scope="col">Assists</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{ Model.Players = Model.Players.OrderByDescending(x => x.Assists);}
+
+                                    @{ counter = 1;}
+                                    @foreach (var player in Model.Players)
+                                    {
+                                        if (counter >= 6)
+                                        {
+                                            break;
+                                        }
+                                        <tr>
+                                            <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" alt="Logo" width="50" height="50"></th>
+                                            <td>@player.PlayerInfo.Name</td>
+                                            <td>@player.Team.TeamInfo.Abbreviation</td>
+                                            <td>@player.GamesPlayed</td>
+                                            <td>@player.Assists</td>
+                                        </tr>
+                                        counter++;
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselPlayerStandings" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselPlayerStandings" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
