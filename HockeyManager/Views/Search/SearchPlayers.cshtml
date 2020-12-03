@@ -8,6 +8,11 @@
 
 <script>
     $(document).ready(function () {
+
+        $(".backup_picture").on("error", function () {
+            $(this).attr('src', 'https://b.fssta.com/uploads/application/fs-app/default-headshot.vresize.315.315.medium.0.png');
+        });
+
         $.ajax(
             {
                 url: "/Search/getFavourites",
@@ -182,7 +187,7 @@
 
                     </td>
                     <td>
-                        <img src=@Html.DisplayFor(modelItem => item.PlayerInfo.HeadShotUrl) alt="Headshot" width="100" height="100">
+                        <img src=@Html.DisplayFor(modelItem => item.PlayerInfo.HeadShotUrl) onerror="this.src='../images/silhouette-headshot.png'" width="100" height="100">
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.PlayerInfo.Name)
