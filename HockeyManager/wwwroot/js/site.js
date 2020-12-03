@@ -4,11 +4,11 @@
 // Write your JavaScript code.
 function checkAll(isChecked) {
     if (isChecked) {
-        $('input[id="team"]').each(function () {
+        $('input[class="team-checkbox"]').each(function () {
             this.checked = true;
         });
     } else {
-        $('input[id="team"]').each(function () {
+        $('input[class="team-checkbox"]').each(function () {
             this.checked = false;
         });
     }
