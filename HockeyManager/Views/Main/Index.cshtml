@@ -3,6 +3,16 @@
 @{
     ViewData["Title"] = "Main Page";
 }
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".backup_picture").on("error", function () {
+            $(this).attr('src', 'https://b.fssta.com/uploads/application/fs-app/default-headshot.vresize.315.315.medium.0.png');
+        });
+    });
+</script>
+
 <div class="container">
     <div class="text-center">
         <h1 class="display-4">Welcome</h1>
@@ -182,7 +192,7 @@
                                             break;
                                         }
                                         <tr>
-                                            <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" alt="Logo" width="50" height="50"></th>
+                                            <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" onerror="this.src='../images/silhouette-headshot.png'" width="50" height="50"></th>
                                             <td>@player.PlayerInfo.Name</td>
                                             <td>@player.Team.TeamInfo.Abbreviation</td>
                                             <td>@player.GamesPlayed</td>
@@ -220,13 +230,13 @@
                                         {
                                             break;
                                         }
-                                    <tr>
-                                        <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" alt="Logo" width="50" height="50"></th>
-                                        <td>@player.PlayerInfo.Name</td>
-                                        <td>@player.Team.TeamInfo.Abbreviation</td>
-                                        <td>@player.GamesPlayed</td>
-                                        <td>@player.Goals</td>
-                                    </tr>
+                                        <tr>
+                                            <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" onerror="this.src='../images/silhouette-headshot.png'" width="50" height="50"></th>
+                                            <td>@player.PlayerInfo.Name</td>
+                                            <td>@player.Team.TeamInfo.Abbreviation</td>
+                                            <td>@player.GamesPlayed</td>
+                                            <td>@player.Goals</td>
+                                        </tr>
                                         counter++;
 
                                     }
@@ -258,7 +268,7 @@
                                             break;
                                         }
                                         <tr>
-                                            <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" alt="Logo" width="50" height="50"></th>
+                                            <th scope="row">@counter: <img src=@player.PlayerInfo.HeadShotUrl class="rounded-circle" onerror="this.src='../images/silhouette-headshot.png'" width="50" height="50"></th>
                                             <td>@player.PlayerInfo.Name</td>
                                             <td>@player.Team.TeamInfo.Abbreviation</td>
                                             <td>@player.GamesPlayed</td>
