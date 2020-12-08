@@ -289,7 +289,14 @@ namespace HockeyManager.Controllers
 
             if (_context.Pools.Any(x => x.Name == pool.Name))
             {
-                ViewBag.ErrorMessage = "This pool name already exists";
+                ViewBag.NameErrorMessage = "This pool name already exists";
+                var ruleSets = _context.RuleSets.ToList();
+                return View(new PoolsViewModel { RuleSet = ruleSets });
+            }
+
+            if (pool.Size < 2)
+            {
+                ViewBag.SizeErrorMessage = "Pool size cannot be under 2";
                 var ruleSets = _context.RuleSets.ToList();
                 return View(new PoolsViewModel { RuleSet = ruleSets });
             }
@@ -349,9 +356,6 @@ namespace HockeyManager.Controllers
             {
             var ruleSets = _context.RuleSets.ToList();
             var pools = _context.Pools.Where(x => x.OwnerId == _userManager.GetUserId(User)).Include(x => x.RuleSet).ToList();
-
-            //var count = _context.Teams.Where(x => x.)
-
             return View(new PoolsViewModel { RuleSet = ruleSets, Pools = pools });
             }
 
@@ -361,10 +365,12 @@ namespace HockeyManager.Controllers
         public async Task<ActionResult> Edit(Pool pool)
         {
             var currentSize = _context.Teams.Where(x => x.PoolId == pool.Id).Count();
-            if (pool.Size < currentSize)
+            if (pool.Size < currentSize || pool.Size < 2)
             {
-                //ViewBag.SizeError = "Size is too small.";
-                return RedirectToAction(nameof(Edit));
+                ViewBag.SizeError = "Size is too small.";
+                var ruleSets = _context.RuleSets.ToList();
+                var pools = _context.Pools.Where(x => x.OwnerId == _userManager.GetUserId(User)).Include(x => x.RuleSet).ToList();
+                return View(new PoolsViewModel { RuleSet = ruleSets, Pools = pools });
             }
 
             try
