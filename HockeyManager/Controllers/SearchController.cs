@@ -87,12 +87,25 @@ namespace HockeyManager.Controllers
 
             if (favourite == "Yes")
             {
+                if (user == null)
+                {
+                    SearchPlayer VMplayers = new SearchPlayer(_context.Teams.Include(x => x.TeamInfo).Where(x => x.ApiId != 0).ToList(), _context.Players.Include(x => x.PlayerInfo).Where(x => x.Rank == 0 && x.ApiId != 0).ToList());
+
+                    return View(VMplayers);
+                }
+
                 filterPlayers = _context.Favourites.Where(x => x.UserId == user.Id).Select(x => x.Player).Include(x => x.PlayerInfo).Where(x => x.PlayerInfo.Position.Contains(position) && x.PlayerInfo.Name.Contains(name) && teamFilter.Contains(x.Team.TeamInfo.Abbreviation)).ToList();
                 SearchPlayer VMFavouritePlayers = new SearchPlayer(_context.Teams.Include(x => x.TeamInfo).ToList(), filterPlayers);
                 return View(VMFavouritePlayers);
             }
             else if (favourite == "No")
             {
+                if (user == null)
+                {
+                    SearchPlayer VMplayers = new SearchPlayer(_context.Teams.Include(x => x.TeamInfo).Where(x => x.ApiId != 0).ToList(), _context.Players.Include(x => x.PlayerInfo).Where(x => x.Rank == 0 && x.ApiId != 0).ToList());
+
+                    return View(VMplayers);
+                }
                 filterPlayers = _context.Players.Include(x => x.PlayerInfo).Where(x => x.PlayerInfo.Position.Contains(position) && x.PlayerInfo.Name.Contains(name) && teamFilter.Contains(x.Team.TeamInfo.Abbreviation)).Include(x => x.Favourites).ToList();
 
 
