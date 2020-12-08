@@ -6,6 +6,7 @@ using HockeyManager.Areas.Identity.Data;
 using HockeyManager.Data;
 using HockeyManager.Models;
 using HockeyManager.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -103,6 +104,7 @@ namespace HockeyManager.Controllers
 
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<string[]> getFavourites()
         {
@@ -112,6 +114,7 @@ namespace HockeyManager.Controllers
             return result;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task Post()
         {
