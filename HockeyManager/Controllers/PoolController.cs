@@ -290,7 +290,8 @@ namespace HockeyManager.Controllers
             if (_context.Pools.Any(x => x.Name == pool.Name))
             {
                 ViewBag.ErrorMessage = "This pool name already exists";
-                return View();
+                var ruleSets = _context.RuleSets.ToList();
+                return View(new PoolsViewModel { RuleSet = ruleSets });
             }
 
             var user = await _userManager.GetUserAsync(User);
