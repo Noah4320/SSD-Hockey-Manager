@@ -59,11 +59,19 @@ namespace HockeyManager.Controllers
         [HttpPost]
         public async Task<ActionResult> SearchPlayers(IFormCollection data)
         {
+            List<HMPlayer> filterPlayers = new List<HMPlayer>();
             //ToDo: Known issue with duplicate favourites. Less code should fix this.
             var user = await _userManager.GetUserAsync(User);
             string name = data["Name"];
             string position = data["Position"];
             string favourite = data["Favourite"];
+
+            if (name.Length > 50)
+            {
+                ViewBag.NameError = "Name character limit is 50.";
+                SearchPlayer VMplayers = new SearchPlayer(_context.Teams.Include(x => x.TeamInfo).Where(x => x.ApiId != 0).ToList(), _context.Players.Include(x => x.PlayerInfo).Where(x => x.Rank == 0 && x.ApiId != 0).ToList());
+                return View(VMplayers);
+            }
 
             List<string> teamFilter = new List<string>();
 
@@ -76,8 +84,6 @@ namespace HockeyManager.Controllers
                     teamFilter.Add(key);
                 }
             }
-
-            List<HMPlayer> filterPlayers = new List<HMPlayer>();
 
             if (favourite == "Yes")
             {

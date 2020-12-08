@@ -365,9 +365,9 @@ namespace HockeyManager.Controllers
         public async Task<ActionResult> Edit(Pool pool)
         {
             var currentSize = _context.Teams.Where(x => x.PoolId == pool.Id).Count();
-            if (pool.Size < currentSize || pool.Size < 2)
+            if (pool.Size < currentSize || pool.Size < 2 || pool.Size > 1000)
             {
-                ViewBag.SizeError = "Size is too small.";
+                ViewBag.SizeError = "Size is invalid.";
                 var ruleSets = _context.RuleSets.ToList();
                 var pools = _context.Pools.Where(x => x.OwnerId == _userManager.GetUserId(User)).Include(x => x.RuleSet).ToList();
                 return View(new PoolsViewModel { RuleSet = ruleSets, Pools = pools });

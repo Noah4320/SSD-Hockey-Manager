@@ -14,10 +14,12 @@ namespace HockeyManager.Models
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(length:50, ErrorMessage = "Name limit is 50 characters")]
         public string Name { get; set; }
         [Required]
         public bool Private { get; set; }
         [Required]
+        [Range(2, 1000)]
         public int Size { get; set; }
         public string Status { get; set; }
         public virtual ICollection<PoolList> PoolList { get; set; }

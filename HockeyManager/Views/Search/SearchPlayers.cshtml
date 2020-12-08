@@ -59,12 +59,13 @@
     <form method="post" action="SearchPlayers">
 
         Name
-        <input type="text" id="Name" name="Name" />
+        <input type="text" id="Name" name="Name" maxlength="50"/>
+        <span  class="text-danger">@ViewBag.NameError</span>
         <div class="row">
             <div class="col-12">
                 <input type="checkbox" onclick="checkAll(this.checked)" checked /> Select all
                 @foreach (var item in Model.Teams)
-                {   
+                {
                     <label class="checkbox-inline">
                         <input class="team-checkbox" type="checkbox" name=@item.TeamInfo.Abbreviation checked> @item.TeamInfo.Name
                     </label>
