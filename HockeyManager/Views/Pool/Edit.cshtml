@@ -126,7 +126,7 @@
                             <td>@pool.Name</td>
                             <td>@pool.RuleSet.Name</td>
                             <td>@pool.Private</td>
-                            <td>@_context.Teams.Where(x => x.PoolId == pool.Id).Count()/@pool.Size</td>
+                            <td>@_context.PoolList.Where(x => x.PoolId == pool.Id).Count()/@pool.Size</td>
                             <td>@pool.Status</td>
                         </tr>
                         }

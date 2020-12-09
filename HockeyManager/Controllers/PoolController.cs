@@ -335,17 +335,22 @@ namespace HockeyManager.Controllers
                 return "You have already joined this pool!";
             }
 
+            var listOfUsers = _context.PoolList.Where(x => x.PoolId == pool.Id).Count();
+
+            if (listOfUsers >= pool.Size)
+            {
+                return "Pool is full!";
+            }
+
+            //Validation complete
+
             joinPool.PoolId = pool.Id;
             joinPool.UserId = _userManager.GetUserId(User);
 
             await _context.PoolList.AddAsync(joinPool);
             await _context.SaveChangesAsync();
 
-            var poolTeams = _context.Teams.Where(x => x.PoolId == pool.Id);
-            if (poolTeams.Count() >= pool.Size)
-            {
-                return "Pool is full!";
-            }
+          
 
             return "Pool joined successfully!";
         }
